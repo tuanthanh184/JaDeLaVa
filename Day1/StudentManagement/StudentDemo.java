@@ -1,4 +1,4 @@
-package Day1;
+package StudentManagement;
 
 import java.util.Scanner;
 
@@ -49,5 +49,4 @@ public class StudentDemo {
     student.setClassification(classification);
     System.out.println(student);
   }
-
 }

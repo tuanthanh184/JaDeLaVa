@@ -1,8 +1,8 @@
-package Day1;
+package WorkingWithString;
 
 import java.util.Scanner;
 
-public class Homework1 {
+public class ConvertNumber {
   public void convertNumber() {
     System.out.println("Enter a string number: ");
     String num = new Scanner(System.in).nextLine();

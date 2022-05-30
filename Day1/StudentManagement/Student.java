@@ -1,4 +1,4 @@
-package Day1;
+package StudentManagement;
 
 public class Student {
   private String code;
