@@ -41,9 +41,9 @@ public class Employee {
   }
 
   public void setEmpNm(String empNm) {
-    // if (empNm.length() == 0) {
-    // throw new Error("Employee name is required!");
-    // }
+    if (empNm.length() == 0) {
+      throw new Error("Employee name is required!");
+    }
     this.empNm = empNm;
   }
 
@@ -57,17 +57,17 @@ public class Employee {
   }
 
   public void setGender(boolean gender, String genderInput) {
-    // try {
-    // if (genderInput.equalsIgnoreCase("nam")) {
-    // gender = true;
-    // } else if (genderInput.equalsIgnoreCase("nu")) {
-    // gender = false;
-    // } else {
-    // throw new Error("Invalid gender!");
-    // }
-    // } catch (Exception e) {
-    // System.out.println(e.getMessage());
-    // }
+    try {
+      if (genderInput.equalsIgnoreCase("nam")) {
+        gender = true;
+      } else if (genderInput.equalsIgnoreCase("nu")) {
+        gender = false;
+      } else {
+        throw new Error("Invalid gender!");
+      }
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
     this.gender = gender;
   }
 
