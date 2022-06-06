@@ -7,21 +7,24 @@ public class Player {
   private String startDate;
   private int playTimeByMin;
   private int goalScore;
-  private long salary;
+  private long basicSalary;
+  private long totalBonus;
+  private long totalSalary;
 
   public Player() {
   }
 
-  public Player(String playerName, int shirtNumber, int birthYear,
-      String startDate, int playTimeByMin, int goalScore,
-      long salary) {
+  public Player(String playerName, int shirtNumber, int birthYear, String startDate, int playTimeByMin, int goalScore,
+      long basicSalary, long totalBonus, long totalSalary) {
     this.playerName = playerName;
     this.shirtNumber = shirtNumber;
     this.birthYear = birthYear;
     this.startDate = startDate;
     this.playTimeByMin = playTimeByMin;
     this.goalScore = goalScore;
-    this.salary = salary;
+    this.basicSalary = basicSalary;
+    this.totalBonus = totalBonus;
+    this.totalSalary = totalSalary;
   }
 
   public String getPlayerName() {
@@ -72,12 +75,28 @@ public class Player {
     this.goalScore = goalScore;
   }
 
-  public long getSalary() {
-    return this.salary;
+  public long getBasicSalary() {
+    return this.basicSalary;
   }
 
-  public void setSalary(long salary) {
-    this.salary = salary;
+  public void setBasicSalary(long basicSalary) {
+    this.basicSalary = basicSalary;
+  }
+
+  public long getTotalBonus() {
+    return this.totalBonus;
+  }
+
+  public void setTotalBonus(long totalBonus) {
+    this.totalBonus = totalBonus;
+  }
+
+  public long getTotalSalary() {
+    return this.totalSalary;
+  }
+
+  public void setTotalSalary(long totalSalary) {
+    this.totalSalary = totalSalary;
   }
 
   @Override
@@ -89,7 +108,10 @@ public class Player {
         ", startDate='" + getStartDate() + "'" +
         ", playTimeByMin='" + getPlayTimeByMin() + "'" +
         ", goalScore='" + getGoalScore() + "'" +
-        ", salary='" + getSalary() + "'" +
+        ", basicSalary='" + getBasicSalary() + "'" +
+        ", totalBonus='" + getTotalBonus() + "'" +
+        ", totalSalary='" + getTotalSalary() + "'" +
         "}";
   }
+
 }

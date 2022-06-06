@@ -10,31 +10,21 @@ public class PlayerManager {
 
   Scanner scanner = new Scanner(System.in);
 
-  public void addPlayer() {
-
-    System.out.println("Insert number of players: ");
-    int n = scanner.nextInt();
-    scanner.nextLine();
-
-    for (int i = 0; i < n; i++) {
-      Player player = new Player();
-      this.setPlayer(player);
-    }
-    this.writeFile("Saved successfully " + n + " records");
-  }
-
   public void calcTotalSalaries() {
-    this.readFile();
+    this.readFile("player-raw.dat");
+    this.setSalary();
 
-    long totalSalaries = 0L;
+    long totalSalariesOfTeam = 0L;
     for (Player player : players) {
-      totalSalaries += player.getSalary();
+      totalSalariesOfTeam += player.getTotalSalary();
     }
-    System.out.println(totalSalaries);
+    System.out.println(totalSalariesOfTeam);
   }
 
   public void findPlayersByScores() {
-    this.readFile();
+    this.readFile("player-raw.dat");
+    this.setSalary();
+
     System.out.println("Enter min range:");
     int minRange = scanner.nextInt();
     scanner.nextLine();
@@ -51,7 +41,7 @@ public class PlayerManager {
         .collect(Collectors.toList());
 
     if (filteredPlayers.size() != 0) {
-      System.out.printf("Players who have from %d to %d scores:", minRange, maxRange);
+      System.out.printf("Players who have from %d to %d scores: \n", minRange, maxRange);
       for (Player player : filteredPlayers) {
         System.out.println(player);
       }
@@ -61,30 +51,33 @@ public class PlayerManager {
   }
 
   public void sortPlayersBySalariesDesc() {
-    this.readFile();
+    this.readFile("player-raw.dat");
+    this.setSalary();
 
-    players.sort((player1, player2) -> (int) (player2.getSalary() - player1.getSalary()));
+    players.sort((player1, player2) -> (int) (player2.getTotalSalary() - player1.getTotalSalary()));
 
-    this.writeFile("Players list by salary descending order is sorted!");
+    this.writeFile("player-sort.dat", "Players list by salary descending order is sorted!");
   }
 
   public void updatePlayer() {
-    this.readFile();
+    this.readFile("player-raw.dat");
     System.out.println("Select player's shirt number to update:");
     int shirtNumberUpdate = scanner.nextInt();
     scanner.nextLine();
     for (int i = 0; i < players.size(); i++) {
       if (players.get(i).getShirtNumber() == shirtNumberUpdate) {
         this.setPlayer(players.get(i));
-        players.remove(i);
       }
     }
+    this.setSalary();
 
-    this.writeFile("Update successfully player " + shirtNumberUpdate);
+    this.writeFile("player-updated.dat", "Update successfully player " + shirtNumberUpdate);
+
   }
 
   public void deletePlayer() {
-    this.readFile();
+    this.readFile("player-raw.dat");
+    this.setSalary();
 
     System.out.println("Select player's shirt number to delete:");
     int shirtNumberDel = scanner.nextInt();
@@ -99,12 +92,12 @@ public class PlayerManager {
       System.out.printf("Player %d is not found", shirtNumberDel);
     }
 
-    this.writeFile("Delete successfully player " + shirtNumberDel);
+    this.writeFile("player-deleted.dat", "Delete successfully player " + shirtNumberDel);
   }
 
-  public void readFile() {
+  public void readFile(String fileName) {
     try {
-      BufferedReader bufferedReader = new BufferedReader(new FileReader("player.dat"));
+      BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
       String line;
 
       while ((line = bufferedReader.readLine()) != null) {
@@ -117,25 +110,25 @@ public class PlayerManager {
         player.setStartDate(arr[++i]);
         player.setPlayTimeByMin(Integer.parseInt(arr[++i]));
         player.setGoalScore(Integer.parseInt(arr[++i]));
-        player.setSalary(Long.parseLong(arr[++i]));
+        player.setBasicSalary(Long.parseLong(arr[++i]));
         players.add(player);
       }
       bufferedReader.close();
-      System.out.println(players);
+      System.out.printf("Read successfully file %s", fileName);
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
-  public void writeFile(String message) {
+  public void writeFile(String fileName, String message) {
     try {
-      BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("player.dat"));
+      BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
       for (Player player : players) {
         StringBuilder builder = new StringBuilder();
         builder.append(player.getPlayerName()).append(";").append(player.getShirtNumber()).append(";")
             .append(player.getBirthYear()).append(";").append(player.getStartDate()).append(";")
             .append(player.getPlayTimeByMin()).append(";").append(player.getGoalScore()).append(";")
-            .append(player.getSalary());
+            .append(player.getTotalSalary()).append(";").append(player.getTotalBonus());
         bufferedWriter.write(builder.toString());
         bufferedWriter.newLine();
       }
@@ -152,7 +145,6 @@ public class PlayerManager {
     final int MIN_PLAYER_AGE = 16;
     final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
     final int MAX_BIRTH_YEAR = Calendar.getInstance().get(Calendar.YEAR) - MIN_PLAYER_AGE;
-    final long BONUS_PER_GOAL_SCORE = 5000000L;
     // Player name
     System.out.println("Player name: ");
     String playerName = scanner.nextLine();
@@ -161,21 +153,6 @@ public class PlayerManager {
       throw new Error("Player name cannot be blank");
     }
     player.setPlayerName(playerName);
-
-    // Player shirt number
-    System.out.println("Player shirt number: ");
-    int shirtNumber = scanner.nextInt();
-    scanner.nextLine();
-    if (shirtNumber < 1 || shirtNumber > 99) {
-      throw new Error("Invalid shirt number");
-
-    }
-    for (Player footballPlayer : players) {
-      if (footballPlayer.getShirtNumber() == shirtNumber) {
-        throw new Error("Shirt number " + shirtNumber + " is already existed");
-      }
-    }
-    player.setShirtNumber(shirtNumber);
 
     // Player birth year
     System.out.println("Player birth year: ");
@@ -217,17 +194,6 @@ public class PlayerManager {
     int playTimeByMin = scanner.nextInt();
     scanner.nextLine();
 
-    long salary = 0L;
-
-    if (playTimeByMin < 0) {
-      throw new Error("Playtime cannot be less than 0");
-    } else if (playTimeByMin <= 100) {
-      salary = 10000000L;
-    } else if (playTimeByMin <= 500) {
-      salary = 50000000L;
-    } else {
-      salary = 65000000L;
-    }
     player.setPlayTimeByMin(playTimeByMin);
 
     // Player goal score
@@ -239,9 +205,31 @@ public class PlayerManager {
     }
     player.setGoalScore(goalScore);
 
-    salary += goalScore * BONUS_PER_GOAL_SCORE;
-    player.setSalary(salary);
+  }
 
-    players.add(player);
+  public void setSalary() {
+    final long BONUS_PER_GOAL_SCORE = 5000000L;
+    for (Player player : players) {
+      int playTimeByMin = player.getPlayTimeByMin();
+      int goalScore = player.getGoalScore();
+      long basicSalary = player.getBasicSalary();
+      long totalBonus = 0L;
+      long totalSalary = 0L;
+
+      if (playTimeByMin <= 100) {
+        totalBonus = 10000000L;
+      } else if (playTimeByMin <= 500) {
+        totalBonus = 50000000L;
+      } else {
+        totalBonus = 65000000L;
+      }
+      totalBonus += goalScore * BONUS_PER_GOAL_SCORE;
+      totalSalary = basicSalary + totalBonus;
+
+      player.setTotalBonus(totalBonus);
+      player.setTotalSalary(totalSalary);
+
+      System.out.println(player);
+    }
   }
 }
