@@ -1,0 +1,8 @@
+22;Ha;22;Hanoi;8.0
+19;Hang;18;Hai Phong;5.9
+3;Huong;25;Da Nang;8.3
+4;Thanh;24;Ha Noi;8.0
+11;Thu;20;Hai Duong;5.8
+5;Tien;25;Ha Noi;9.9
+5;Uyen;25;Ha Noi;7.9
+7;Van;26;Bac Ninh;8.7
